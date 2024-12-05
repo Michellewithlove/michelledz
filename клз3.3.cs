@@ -1,59 +1,92 @@
-using System;
+﻿using System;
 
-public class ComplexNumber // Класс для представления комплексных чисел
+public class Complex //мат.операции
 {
-    public double RealPart { get; } // Действительная часть
-    public double ImaginaryPart { get; } // Мнимую часть
+    public double Real { get; }
+    public double Imaginary { get; }
 
-    // Конструктор принимает действительную и мнимую часть
-    public ComplexNumber(double real, double imaginary)
+    public Complex(double real, double imaginary)
     {
-        RealPart = real;
-        ImaginaryPart = imaginary;
+        Real = real;
+        Imaginary = imaginary;
     }
 
-    // Оператор сложения для комплексных чисел
-    public static ComplexNumber operator +(ComplexNumber left, ComplexNumber right)
+    // Сложение
+    public static Complex operator +(Complex a, Complex b)
     {
-        // Создаем новое комплексное число, складывая соответствующие части
-        return new ComplexNumber(left.RealPart + right.RealPart, left.ImaginaryPart + right.ImaginaryPart);
+        return new Complex(a.Real + b.Real, a.Imaginary + b.Imaginary);
     }
 
-    // Оператор умножения для комплексных чисел
-    public static ComplexNumber operator *(ComplexNumber left, ComplexNumber right)
+    // Умножение
+    public static Complex operator *(Complex a, Complex b)
     {
-        return new ComplexNumber(
-            left.RealPart * right.RealPart - left.ImaginaryPart * right.ImaginaryPart,
-            left.RealPart * right.ImaginaryPart + left.ImaginaryPart * right.RealPart);
+        return new Complex(
+            a.Real * b.Real - a.Imaginary * b.Imaginary,
+            a.Real * b.Imaginary + a.Imaginary * b.Real);
     }
 
-    // Оператор деления для комплексных чисел
-    public static ComplexNumber operator /(ComplexNumber numerator, ComplexNumber denominator)
+    // Деление
+    public static Complex operator /(Complex a, Complex b)
     {
-        // Вычисляем знаменатель как сумму квадратов действительной и мнимой частей делителя
-        double denominatorMagnitude = denominator.RealPart * denominator.RealPart + denominator.ImaginaryPart * denominator.ImaginaryPart;
-        
-        return new ComplexNumber(
-            (numerator.RealPart * denominator.RealPart + numerator.ImaginaryPart * denominator.ImaginaryPart) / denominatorMagnitude,
-            (numerator.ImaginaryPart * denominator.RealPart - numerator.RealPart * denominator.ImaginaryPart) / denominatorMagnitude);
+        double denominator = b.Real * b.Real + b.Imaginary * b.Imaginary;
+        return new Complex(
+            (a.Real * b.Real + a.Imaginary * b.Imaginary) / denominator,
+            (a.Imaginary * b.Real - a.Real * b.Imaginary) / denominator);
     }
 
-    // Метод для возведения комплексного числа в степень
-    public ComplexNumber RaiseToPower(int exponent)
+    // Возведение в степень
+    public Complex Pow(int exponent)
     {
-        ComplexNumber result = new ComplexNumber(1, 0); // Начальное значение равно 1
+        Complex result = new Complex(1, 0);
         for (int i = 0; i < exponent; i++)
         {
-            result *= this; // Умножаем себя на результат
+            result *= this;
         }
-        return result; // Возвращаем результат возведения в степень
+        return result;
     }
 
-    // Метод для вычисления квадратного корня из комплексного числа
-    public ComplexNumber SquareRoot()
+    // Извлечение корня
+    public Complex Sqrt()
     {
-        double magnitude = Math.Sqrt(RealPart * RealPart + ImaginaryPart * ImaginaryPart); // Модуль
-        double angle = Math.Atan2(ImaginaryPart, RealPart); // Аргумент
-        return new ComplexNumber(Math.Sqrt(magnitude) * Math.Cos(angle / 2), Math.Sqrt(magnitude) * Math.Sin(angle / 2));
+        double r = Math.Sqrt(Real * Real + Imaginary * Imaginary);
+        double theta = Math.Atan2(Imaginary, Real);
+        return new Complex(Math.Sqrt(r) * Math.Cos(theta / 2), Math.Sqrt(r) * Math.Sin(theta / 2));
+    }
+
+    // Нахождение модуля
+    public double Modulus()
+    {
+        return Math.Sqrt(Real * Real + Imaginary * Imaginary);
+    }
+
+    // Нахождение угла
+    public double Argument()
+    {
+        return Math.Atan2(Imaginary, Real);
+    }
+
+    // Переопределение ToString для удобного вывода
+    public override string ToString()
+    {
+        return $"{Real} + {Imaginary}i";
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Complex a = new Complex(5, 3);
+        Complex b = new Complex(6, 2);
+
+        Console.WriteLine($"a: {a}");
+        Console.WriteLine($"b: {b}");
+        Console.WriteLine($"Сложение: {a + b}");
+        Console.WriteLine($"Умножение: {a * b}");
+        Console.WriteLine($"Деление: {a / b}");
+        Console.WriteLine($"Возведение в степень (2): {a.Pow(2)}");
+        Console.WriteLine($"Корень: {a.Sqrt()}");
+        Console.WriteLine($"Модуль: {a.Modulus()}");
+        Console.WriteLine($"Угол: {a.Argument()}");
     }
 }
